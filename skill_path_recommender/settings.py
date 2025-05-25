@@ -30,9 +30,9 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     
     # Local apps
-    'accounts',
-    'careers',
-    'learning_paths',
+    'accounts.apps.AccountsConfig',
+    'careers.apps.CareersConfig',
+    'learning_paths.apps.LearningPathsConfig',
 ]
 
 MIDDLEWARE = [

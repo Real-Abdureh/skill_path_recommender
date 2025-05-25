@@ -3,136 +3,19 @@
 {% block title %}Dashboard | Skill Path Recommender{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="mb-4">Your Dashboard</h1>
-        
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <p class="lead">Track your progress and continue your learning journey</p>
-            <a href="{% url 'generate_path' %}" class="btn btn-primary">
-                <i class="fas fa-plus-circle"></i> Create New Path
-            </a>
-        </div>
-    </div>
-</div>
-
-{% if path_progress %}
-<div class="row mb-5">
-    <div class="col-12">
-        <h2 class="mb-4">Your Learning Paths</h2>
-        
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            {% for item in path_progress %}
-            <div class="col">
-                <div class="card h-100 dashboard-card">
-                    <div class="card-body">
-                        <h3 class="card-title">{{ item.path.name }}</h3>
-                        <p class="text-muted">{{ item.path.career.name }}</p>
-                        
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Progress</span>
-                                <span><strong>{{ item.completion|floatformat:0 }}%</strong></span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.completion }}%" 
-                                    aria-valuenow="{{ item.completion }}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        
-                        {% if item.next_step %}
-                        <div class="mb-3">
-                            <h5>Next Step: {{ item.next_step.title }}</h5>
-                            <p class="text-muted">{{ item.next_step.description|truncatechars:100 }}</p>
-                        </div>
-                        
-                        <a href="{% url 'path_step_detail' path_id=item.path.id step_id=item.next_step.id %}" class="btn btn-outline-primary">
-                            Continue Learning
-                        </a>
-                        {% else %}
-                        <div class="alert alert-success">
-                            <i class="fas fa-trophy me-2"></i> Congratulations! You have completed this path.
-                        </div>
-                        {% endif %}
-                        
-                        <a href="{% url 'learning_path_detail' path_id=item.path.id %}" class="btn btn-link">
-                            View Full Path
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <h4 class="alert-heading">Get Started with Learning Paths!</h4>
-            <p>You haven't created any learning paths yet. Choose a career goal to get started!</p>
-            <a href="{% url 'generate_path' %}" class="btn btn-primary">
-                Create Your First Learning Path
-            </a>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<div class="row">
-    <div class="col-12 col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h3 class="card-title">Your Skills</h3>
-                
-                {% if profile.current_skills %}
-                <ul class="list-group list-group-flush">
-                    {% for skill, level in profile.current_skills.items %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ skill }}
-                        <div>
-                            {% for i in "123" %}
-                                {% if forloop.counter <= level %}
-                                <span class="skill-level skill-level-{{ level }}"></span>
-                                {% else %}
-                                <span class="skill-level bg-light"></span>
-                                {% endif %}
-                            {% endfor %}
-                            {{ level|floatformat:0 }}/3
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>You haven't added any skills to your profile yet.</p>
-                {% endif %}
-                
-                <div class="mt-3">
-                    <a href="{% url 'profile_update' %}" class="btn btn-outline-primary">
-                        <i class="fas fa-edit"></i> Update Skills
-                    </a>
-                </div>
-            </div>
-        </div>
+<div class="container mt-4">
+    <h1>Welcome to your Dashboard, {{ user.username }}!</h1>
+    <p>This is your personalized space. From here you can manage your learning paths and update your profile.</p>
+    
+    <div class="mt-4">
+        <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary">Update Profile</a>
+        {# Add other dashboard links here as features are built, e.g., to learning paths #}
+        {# <a href="{% url 'learning_paths:path_list' %}" class="btn btn-info">My Learning Paths</a> #}
     </div>
     
-    <div class="col-12 col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h3 class="card-title">Recommended Careers</h3>
-                <p>Based on your current skills, these careers might be a good fit:</p>
-                
-                <div class="list-group">
-                    <a href="{% url 'careers_list' %}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Explore All Career Paths</h5>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                        <p class="mb-1">Find the perfect career path that matches your interests and goals.</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <form method="post" action="{% url 'accounts:logout' %}" class="mt-4">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
 </div>
 {% endblock %}
