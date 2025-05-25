@@ -1,96 +1,32 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Careers | Skill Path Recommender{% endblock %}
+{% block title %}Available Careers | Skill Path Recommender{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1>Explore Careers</h1>
-        <p class="lead">Browse through different career paths and find the perfect match for your goals</p>
-    </div>
-</div>
+<div class="container mt-4">
+    <h1>Available Careers</h1>
+    <hr>
 
-<div class="row mb-4">
-    <div class="col-md-8">
-        <div class="input-group mb-3">
-            <input type="text" id="careerSearch" class="form-control" placeholder="Search careers...">
-            <button class="btn btn-outline-primary" type="button">
-                <i class="fas fa-search"></i> Search
-            </button>
-        </div>
-    </div>
-    <div class="col-md-4 text-md-end">
-        {% if user.is_authenticated %}
-        <a href="{% url 'generate_path' %}" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> Create Learning Path
-        </a>
-        {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary">
-            <i class="fas fa-sign-in-alt"></i> Login to Create Path
-        </a>
-        {% endif %}
-    </div>
-</div>
-
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 career-cards">
-    {% for career in careers %}
-    <div class="col">
-        <div class="card h-100 career-card">
-            <div class="card-body">
-                <h3 class="card-title">{{ career.name }}</h3>
-                <div class="mb-3">
-                    <span class="badge {% if career.difficulty_level == 1 %}bg-success{% elif career.difficulty_level == 2 %}bg-warning{% else %}bg-danger{% endif %}">
-                        {{ career.get_difficulty_level_display }}
-                    </span>
-                    <span class="badge bg-info">{{ career.avg_completion_time }} weeks</span>
+    {% if careers %}
+        <div class="list-group">
+            {% for career in careers %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm">
+                <div class="d-flex w-100 justify-content-between">
+                    <h2 class="mb-1"><a href="{% url 'careers:career_detail' career.id %}">{{ career.name }}</a></h2>
                 </div>
-                <p class="card-text">{{ career.description|truncatechars:150 }}</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <a href="{% url 'career_detail' career_id=career.id %}" class="btn btn-outline-primary">Learn More</a>
-                    {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'career_selection' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="career_id" value="{{ career.id }}">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-map-marker-alt"></i> Create Path
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
+                <p class="mb-1">{{ career.description|truncatewords:30 }}</p>
             </div>
+            {% empty %}
+            <div class="alert alert-info" role="alert">
+                <p class="mb-0">No careers available at the moment. Please check back later!</p>
+            </div>
+            {% endfor %}
         </div>
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">
-            No careers found. Check back later for more options.
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p class="mb-0">No careers available at the moment. Please check back later!</p>
         </div>
-    </div>
-    {% endfor %}
+    {% endif %}
 </div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('careerSearch');
-        const careerCards = document.querySelectorAll('.career-card');
-        
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            careerCards.forEach(function(card) {
-                const title = card.querySelector('.card-title').textContent.toLowerCase();
-                const description = card.querySelector('.card-text').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.parentElement.style.display = '';
-                } else {
-                    card.parentElement.style.display = 'none';
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}
