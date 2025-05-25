@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Profile | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card my-5">
+            <div class="card-body">
+                <h1 class="card-title mb-4">Update Your Profile</h1>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea id="bio" name="bio" class="form-control" rows="3">{{ profile.bio }}</textarea>
+                        <div class="form-text">Tell us a bit about yourself, your background, and goals.</div>
+                    </div>
+                    
+                    <h3 class="mb-3">Your Skills</h3>
+                    <p>Rate your skill level from 1 (beginner) to 3 (advanced):</p>
+                    
+                    <!-- Common skills - update these based on your actual skills in the system -->
+                    <div class="mb-4">
+                        <div class="row row-cols-1 row-cols-md-3 g-3">
+                            <!-- Programming skills -->
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Programming</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="skill_Python" class="form-label">Python</label>
+                                            <select id="skill_Python" name="skill_Python" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.Python == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.Python == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.Python == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_JavaScript" class="form-label">JavaScript</label>
+                                            <select id="skill_JavaScript" name="skill_JavaScript" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.JavaScript == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.JavaScript == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.JavaScript == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_Java" class="form-label">Java</label>
+                                            <select id="skill_Java" name="skill_Java" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.Java == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.Java == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.Java == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Data Science skills -->
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Data Science</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="skill_MachineLearning" class="form-label">Machine Learning</label>
+                                            <select id="skill_MachineLearning" name="skill_MachineLearning" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.MachineLearning == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.MachineLearning == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.MachineLearning == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_SQL" class="form-label">SQL</label>
+                                            <select id="skill_SQL" name="skill_SQL" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.SQL == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.SQL == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.SQL == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_Statistics" class="form-label">Statistics</label>
+                                            <select id="skill_Statistics" name="skill_Statistics" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.Statistics == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.Statistics == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.Statistics == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Web Development skills -->
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">Web Development</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="skill_HTML" class="form-label">HTML/CSS</label>
+                                            <select id="skill_HTML" name="skill_HTML" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.HTML == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.HTML == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.HTML == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_React" class="form-label">React</label>
+                                            <select id="skill_React" name="skill_React" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.React == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.React == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.React == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="skill_Django" class="form-label">Django</label>
+                                            <select id="skill_Django" name="skill_Django" class="form-select">
+                                                <option value="">Not Applicable</option>
+                                                <option value="1" {% if profile.current_skills.Django == 1 %}selected{% endif %}>Beginner</option>
+                                                <option value="2" {% if profile.current_skills.Django == 2 %}selected{% endif %}>Intermediate</option>
+                                                <option value="3" {% if profile.current_skills.Django == 3 %}selected{% endif %}>Advanced</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Update Profile</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

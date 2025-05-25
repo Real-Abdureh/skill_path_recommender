@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Career | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>Select Your Career Goal</h1>
+            <p class="lead">Choose a career path to get personalized learning recommendations</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" id="careerSearch" class="form-control" placeholder="Search careers...">
+                <button class="btn btn-outline-primary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for career in careers %}
+        <div class="col career-item">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">{{ career.name }}</h3>
+                    
+                    <div class="mb-3">
+                        <span class="badge {% if career.difficulty_level == 1 %}bg-success{% elif career.difficulty_level == 2 %}bg-warning{% else %}bg-danger{% endif %}">
+                            {{ career.get_difficulty_level_display }}
+                        </span>
+                        <span class="badge bg-info">{{ career.avg_completion_time }} weeks</span>
+                    </div>
+                    
+                    <p class="card-text">{{ career.description|truncatechars:150 }}</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="career_id" value="{{ career.id }}">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check-circle me-2"></i> Select This Career
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No careers found. Please check back later for more options.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('careerSearch');
+        const careerItems = document.querySelectorAll('.career-item');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            careerItems.forEach(function(item) {
+                const title = item.querySelector('.card-title').textContent.toLowerCase();
+                const description = item.querySelector('.card-text').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

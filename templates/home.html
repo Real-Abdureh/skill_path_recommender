@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}AI-Powered Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center py-5">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <h1 class="display-4 fw-bold text-primary">Find Your Career Path</h1>
+            <p class="lead">Unlock your potential with personalized learning paths tailored to your career goals.</p>
+            <p>Our AI-powered system analyzes your current skills and career aspirations to create a customized learning journey that fits your needs.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                {% if user.is_authenticated %}
+                <a href="{% url 'generate_path' %}" class="btn btn-primary btn-lg px-4 me-md-2">Create Your Path</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg px-4">Go to Dashboard</a>
+                {% else %}
+                <a href="{% url 'career_selection' %}" class="btn btn-primary btn-lg px-4 me-md-2">Get Started</a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-secondary btn-lg px-4">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4">How It Works</h3>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <h5>Choose Your Career Goal</h5>
+                            <p class="text-muted">Select from a variety of in-demand career paths.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div>
+                            <h5>Update Your Skills</h5>
+                            <p class="text-muted">Let us know what you already know so we can customize your journey.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div>
+                            <h5>Follow Your Learning Path</h5>
+                            <p class="text-muted">Get a step-by-step guide with curated learning resources.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <h2 class="mb-4">Popular Career Paths</h2>
+            <p class="lead mb-5">Explore learning paths for trending careers in technology and beyond</p>
+        </div>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-icon mb-3 text-primary">
+                        <i class="fas fa-laptop-code fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">Software Development</h3>
+                    <p class="card-text">Learn programming languages, frameworks, and best practices to build powerful applications.</p>
+                    <a href="{% url 'careers_list' %}" class="btn btn-outline-primary">Explore Path</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-icon mb-3 text-primary">
+                        <i class="fas fa-chart-bar fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">Data Science</h3>
+                    <p class="card-text">Master data analysis, machine learning, and statistical modeling to extract insights from data.</p>
+                    <a href="{% url 'careers_list' %}" class="btn btn-outline-primary">Explore Path</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="card-icon mb-3 text-primary">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">Cybersecurity</h3>
+                    <p class="card-text">Develop skills to protect systems and networks from digital attacks and security threats.</p>
+                    <a href="{% url 'careers_list' %}" class="btn btn-outline-primary">Explore Path</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10 text-center">
+            <h2>Why Use Skill Path Recommender?</h2>
+            <p class="lead mb-5">Our AI-powered platform takes the guesswork out of learning new skills</p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon bg-light text-primary rounded-circle p-4 mx-auto mb-3">
+                        <i class="fas fa-brain fa-2x"></i>
+                    </div>
+                    <h4>AI-Powered</h4>
+                    <p>Intelligent recommendations based on your goals and current skill level</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon bg-light text-primary rounded-circle p-4 mx-auto mb-3">
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </div>
+                    <h4>Personalized</h4>
+                    <p>Customized learning paths that adapt to your progress</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon bg-light text-primary rounded-circle p-4 mx-auto mb-3">
+                        <i class="fas fa-book-reader fa-2x"></i>
+                    </div>
+                    <h4>Curated Resources</h4>
+                    <p>High-quality learning materials selected for each skill</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

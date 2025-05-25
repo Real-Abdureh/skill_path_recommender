@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Skills | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>Explore Skills</h1>
+        <p class="lead">Browse through different skills that can enhance your career path</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="input-group mb-3">
+            <input type="text" id="skillSearch" class="form-control" placeholder="Search skills...">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dropdown text-end">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter by Category
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="categoryFilter">
+                <li><a class="dropdown-item filter-category" href="#" data-category="all">All Categories</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item filter-category" href="#" data-category="programming">Programming</a></li>
+                <li><a class="dropdown-item filter-category" href="#" data-category="data_science">Data Science</a></li>
+                <li><a class="dropdown-item filter-category" href="#" data-category="design">Design</a></li>
+                <li><a class="dropdown-item filter-category" href="#" data-category="business">Business</a></li>
+                <li><a class="dropdown-item filter-category" href="#" data-category="soft_skill">Soft Skills</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4" id="skillsContainer">
+    {% for skill in skills %}
+    <div class="col skill-item" data-category="{{ skill.category }}">
+        <div class="card h-100">
+            <div class="card-body">
+                <h3 class="card-title">{{ skill.name }}</h3>
+                <span class="badge bg-primary mb-2">{{ skill.get_category_display }}</span>
+                <p class="card-text">{{ skill.description|truncatechars:150 }}</p>
+                <a href="{% url 'skill_detail' skill_id=skill.id %}" class="btn btn-outline-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No skills found. Check back later for more options.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('skillSearch');
+        const skillItems = document.querySelectorAll('.skill-item');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            skillItems.forEach(function(item) {
+                const title = item.querySelector('.card-title').textContent.toLowerCase();
+                const description = item.querySelector('.card-text').textContent.toLowerCase();
+                const category = item.querySelector('.badge').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || category.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Category filter
+        const categoryFilters = document.querySelectorAll('.filter-category');
+        
+        categoryFilters.forEach(function(filter) {
+            filter.addEventListener('click', function(e) {
+                e.preventDefault();
+                const category = this.getAttribute('data-category');
+                
+                skillItems.forEach(function(item) {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                document.getElementById('categoryFilter').textContent = 'Category: ' + 
+                    (category === 'all' ? 'All' : this.textContent);
+            });
+        });
+    });
+</script>
+{% endblock %}

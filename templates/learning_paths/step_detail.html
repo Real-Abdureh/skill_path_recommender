@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ step.title }} | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'learning_path_list' %}">Learning Paths</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'learning_path_detail' path_id=path.id %}">{{ path.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Step {{ step.step_number }}: {{ step.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h1>{{ step.title }}</h1>
+            {% if is_completed %}
+            <span class="badge bg-success p-2">Completed</span>
+            {% endif %}
+        </div>
+        
+        <div class="mb-4">
+            <p class="lead">{{ step.description }}</p>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Skills to Learn</h4>
+            </div>
+            <div class="card-body">
+                {% if skills %}
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for skill in skills %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ skill.name }}</h5>
+                                <p class="card-text">{{ skill.description|truncatechars:150 }}</p>
+                                <span class="badge bg-info">{{ skill.get_category_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No specific skills are associated with this step.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Learning Resources</h4>
+            </div>
+            <div class="card-body">
+                {% if resources %}
+                <div class="accordion" id="resourcesAccordion">
+                    {% for resource in resources %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ resource.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse{{ resource.id }}" aria-expanded="false" 
+                                aria-controls="collapse{{ resource.id }}">
+                                {{ resource.title }}
+                                <span class="badge {% if resource.is_free %}bg-success{% else %}bg-warning{% endif %} ms-2">
+                                    {% if resource.is_free %}Free{% else %}Paid{% endif %}
+                                </span>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ resource.id }}" class="accordion-collapse collapse" 
+                            aria-labelledby="heading{{ resource.id }}" data-bs-parent="#resourcesAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <p>{{ resource.description }}</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-secondary me-1">{{ resource.get_resource_type_display }}</span>
+                                        <span class="badge bg-info me-1">{{ resource.get_difficulty_level_display }}</span>
+                                        <span class="text-muted">Provider: {{ resource.provider }}</span>
+                                    </div>
+                                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary">
+                                        <i class="fas fa-external-link-alt me-1"></i> Access Resource
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No learning resources are available for this step.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4 sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h4 class="card-title">Step Progress</h4>
+                <p>Mark this step as complete once you've finished all the learning materials.</p>
+                
+                {% if is_completed %}
+                <div class="alert alert-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i> You have completed this step!
+                </div>
+                {% else %}
+                <form method="post" action="{% url 'complete_step' path_id=path.id step_id=step.id %}">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check-circle me-2"></i> Mark as Complete
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Path Navigation</h4>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for path_step in path.get_steps %}
+                <a href="{% url 'path_step_detail' path_id=path.id step_id=path_step.id %}" 
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center
+                          {% if path_step.id == step.id %}active{% endif %}">
+                    <span>Step {{ path_step.step_number }}: {{ path_step.title|truncatechars:30 }}</span>
+                    {% if path_step.id in progress.completed_steps %}
+                    <span class="badge bg-success rounded-pill">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

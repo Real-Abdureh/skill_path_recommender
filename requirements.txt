@@ -1,0 +1,20 @@
+# Core dependencies
+Django==5.1.0
+python-dotenv==1.0.0
+whitenoise==6.5.0
+gunicorn==21.2.0
+
+# Frontend
+django-crispy-forms==2.1
+crispy-bootstrap4==2022.1
+
+# Database
+psycopg2-binary==2.9.9
+
+# Production tools
+pymemcache==4.0.0
+django-debug-toolbar==4.2.0
+pillow==10.0.1
+
+# Utilities
+requests==2.31.0

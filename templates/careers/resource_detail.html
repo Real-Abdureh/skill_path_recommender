@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resource.title }} | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'resources_list' %}">Learning Resources</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ resource.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <h1 class="mb-2">{{ resource.title }}</h1>
+            <p class="text-muted">Provider: {{ resource.provider }}</p>
+            
+            <div class="mb-4">
+                <span class="badge {% if resource.is_free %}bg-success{% else %}bg-warning{% endif %} me-1">
+                    {% if resource.is_free %}Free{% else %}Paid{% endif %}
+                </span>
+                <span class="badge bg-secondary me-1">{{ resource.get_resource_type_display }}</span>
+                <span class="badge bg-info">{{ resource.get_difficulty_level_display }}</span>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3>Description</h3>
+                <p class="lead">{{ resource.description }}</p>
+                
+                {% if resource.resource_type == 'course' %}
+                <div class="mt-4">
+                    <h4>Course Details</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Duration</span>
+                            <span>{{ resource.duration|default:"Not specified" }}</span>
+                        </li>
+                        {% if not resource.is_free %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Price</span>
+                            <span>{{ resource.price|default:"Price not specified" }}</span>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Certificate Available</span>
+                            <span>
+                                {% if resource.has_certificate %}
+                                <i class="fas fa-check text-success"></i> Yes
+                                {% else %}
+                                <i class="fas fa-times text-danger"></i> No
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-lg">
+                        <i class="fas fa-external-link-alt me-2"></i> Access {{ resource.get_resource_type_display }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Related Skills</h3>
+            </div>
+            <div class="card-body">
+                {% if skills %}
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for skill_item in skills %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ skill_item.skill.name }}</h5>
+                                <p class="mb-3">{{ skill_item.skill.description|truncatechars:100 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-info">
+                                        {% if skill_item.proficiency_level == 1 %}
+                                        Beginner
+                                        {% elif skill_item.proficiency_level == 2 %}
+                                        Intermediate
+                                        {% elif skill_item.proficiency_level == 3 %}
+                                        Advanced
+                                        {% endif %}
+                                    </span>
+                                    <a href="{% url 'skill_detail' skill_id=skill_item.skill.id %}" class="btn btn-sm btn-outline-primary">
+                                        View Skill
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No specific skills are associated with this resource.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4 sticky-top" style="top: 20px;">
+            <div class="card-header">
+                <h4 class="mb-0">Resource Summary</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Type</span>
+                        <span>{{ resource.get_resource_type_display }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Level</span>
+                        <span>{{ resource.get_difficulty_level_display }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Price</span>
+                        <span>{% if resource.is_free %}Free{% else %}Paid{% endif %}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Provider</span>
+                        <span>{{ resource.provider }}</span>
+                    </li>
+                </ul>
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt me-2"></i> Access Resource
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Add to Learning Path</h4>
+            </div>
+            <div class="card-body">
+                <p>Include this resource in your personalized learning journey.</p>
+                
+                {% if user.is_authenticated %}
+                <a href="{% url 'generate_path' %}" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-plus-circle me-2"></i> Create New Path
+                </a>
+                {% else %}
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i> You need to be logged in to create a learning path.
+                </div>
+                <a href="{% url 'login' %}?next={% url 'resource_detail' resource_id=resource.id %}" class="btn btn-primary w-100 mb-2">
+                    Login
+                </a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary w-100">
+                    Sign Up
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

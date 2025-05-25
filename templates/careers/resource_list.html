@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Learning Resources | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>Learning Resources</h1>
+        <p class="lead">Explore curated learning materials to help you develop your skills</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="input-group mb-3">
+            <input type="text" id="resourceSearch" class="form-control" placeholder="Search resources...">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex gap-2 justify-content-md-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="typeFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                    Resource Type
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="typeFilter">
+                    <li><a class="dropdown-item filter-type" href="#" data-type="all">All Types</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item filter-type" href="#" data-type="course">Courses</a></li>
+                    <li><a class="dropdown-item filter-type" href="#" data-type="tutorial">Tutorials</a></li>
+                    <li><a class="dropdown-item filter-type" href="#" data-type="book">Books</a></li>
+                    <li><a class="dropdown-item filter-type" href="#" data-type="video">Videos</a></li>
+                    <li><a class="dropdown-item filter-type" href="#" data-type="documentation">Documentation</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="priceFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                    Price
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="priceFilter">
+                    <li><a class="dropdown-item filter-price" href="#" data-price="all">All</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item filter-price" href="#" data-price="free">Free Only</a></li>
+                    <li><a class="dropdown-item filter-price" href="#" data-price="paid">Paid</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="levelFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                    Level
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="levelFilter">
+                    <li><a class="dropdown-item filter-level" href="#" data-level="all">All Levels</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item filter-level" href="#" data-level="beginner">Beginner</a></li>
+                    <li><a class="dropdown-item filter-level" href="#" data-level="intermediate">Intermediate</a></li>
+                    <li><a class="dropdown-item filter-level" href="#" data-level="advanced">Advanced</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="resourcesContainer">
+    {% for resource in resources %}
+    <div class="col-12 mb-3 resource-item" 
+         data-type="{{ resource.resource_type }}" 
+         data-price="{% if resource.is_free %}free{% else %}paid{% endif %}"
+         data-level="{{ resource.difficulty_level }}">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-md-flex justify-content-between">
+                    <div>
+                        <h3 class="card-title">{{ resource.title }}</h3>
+                        <p class="text-muted mb-2">Provider: {{ resource.provider }}</p>
+                        <div class="mb-3">
+                            <span class="badge {% if resource.is_free %}bg-success{% else %}bg-warning{% endif %} me-1">
+                                {% if resource.is_free %}Free{% else %}Paid{% endif %}
+                            </span>
+                            <span class="badge bg-secondary me-1">{{ resource.get_resource_type_display }}</span>
+                            <span class="badge bg-info">{{ resource.get_difficulty_level_display }}</span>
+                        </div>
+                        <p class="card-text">{{ resource.description|truncatechars:200 }}</p>
+                    </div>
+                    <div class="ms-md-3 mt-3 mt-md-0 d-flex flex-column justify-content-between align-items-md-end">
+                        <a href="{% url 'resource_detail' resource_id=resource.id %}" class="btn btn-outline-primary mb-2">View Details</a>
+                        <a href="{{ resource.url }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i> Access Resource
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No resources found. Check back later for more options.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-4" id="noResultsMessage" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            No resources match your current filters. Try adjusting your search criteria.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('resourceSearch');
+        const resourceItems = document.querySelectorAll('.resource-item');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        
+        // Current filter state
+        let currentFilters = {
+            type: 'all',
+            price: 'all',
+            level: 'all',
+            search: ''
+        };
+        
+        // Apply filters and search
+        function applyFilters() {
+            let visibleCount = 0;
+            
+            resourceItems.forEach(function(item) {
+                const title = item.querySelector('.card-title').textContent.toLowerCase();
+                const description = item.querySelector('.card-text').textContent.toLowerCase();
+                const provider = item.querySelector('.text-muted').textContent.toLowerCase();
+                
+                const matchesSearch = currentFilters.search === '' || 
+                    title.includes(currentFilters.search) || 
+                    description.includes(currentFilters.search) ||
+                    provider.includes(currentFilters.search);
+                
+                const matchesType = currentFilters.type === 'all' || 
+                    item.getAttribute('data-type') === currentFilters.type;
+                
+                const matchesPrice = currentFilters.price === 'all' || 
+                    item.getAttribute('data-price') === currentFilters.price;
+                
+                const matchesLevel = currentFilters.level === 'all' || 
+                    item.getAttribute('data-level') === currentFilters.level;
+                
+                if (matchesSearch && matchesType && matchesPrice && matchesLevel) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            currentFilters.search = this.value.toLowerCase();
+            applyFilters();
+        });
+        
+        // Type filter
+        const typeFilters = document.querySelectorAll('.filter-type');
+        typeFilters.forEach(function(filter) {
+            filter.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentFilters.type = this.getAttribute('data-type');
+                document.getElementById('typeFilter').textContent = 'Type: ' + 
+                    (currentFilters.type === 'all' ? 'All' : this.textContent);
+                applyFilters();
+            });
+        });
+        
+        // Price filter
+        const priceFilters = document.querySelectorAll('.filter-price');
+        priceFilters.forEach(function(filter) {
+            filter.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentFilters.price = this.getAttribute('data-price');
+                document.getElementById('priceFilter').textContent = 'Price: ' + 
+                    (currentFilters.price === 'all' ? 'All' : this.textContent);
+                applyFilters();
+            });
+        });
+        
+        // Level filter
+        const levelFilters = document.querySelectorAll('.filter-level');
+        levelFilters.forEach(function(filter) {
+            filter.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentFilters.level = this.getAttribute('data-level');
+                document.getElementById('levelFilter').textContent = 'Level: ' + 
+                    (currentFilters.level === 'all' ? 'All' : this.textContent);
+                applyFilters();
+            });
+        });
+    });
+</script>
+{% endblock %}

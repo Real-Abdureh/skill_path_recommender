@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ career.name }} | Skill Path Recommender{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'careers_list' %}">Careers</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ career.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-lg-8">
+        <h1 class="mb-3">{{ career.name }}</h1>
+        
+        <div class="mb-4">
+            <span class="badge {% if career.difficulty_level == 1 %}bg-success{% elif career.difficulty_level == 2 %}bg-warning{% else %}bg-danger{% endif %} me-2">
+                {{ career.get_difficulty_level_display }}
+            </span>
+            <span class="badge bg-info me-2">{{ career.avg_completion_time }} weeks</span>
+        </div>
+        
+        <div class="mb-4">
+            <h3>Description</h3>
+            <p class="lead">{{ career.description }}</p>
+        </div>
+        
+        <h3 class="mb-3">Required Skills</h3>
+        <div class="row mb-4">
+            {% for skill in required_skills %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ skill.name }}</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-2">Proficiency Level:</div>
+                            <div class="progress flex-grow-1" style="height: 10px;">
+                                <div class="progress-bar {% if skill.level == 1 %}bg-success{% elif skill.level == 2 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ skill.level|floatformat:0|mult:33.33 }}%" 
+                                     aria-valuenow="{{ skill.level }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="3">
+                                </div>
+                            </div>
+                            <div class="ms-2">{{ skill.level_display }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No specific skills listed for this career.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4 sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h4 class="card-title">Create Learning Path</h4>
+                <p>Get a personalized learning path for becoming a {{ career.name }}.</p>
+                
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'career_selection' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="career_id" value="{{ career.id }}">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-map-marked-alt me-2"></i> Create My Path
+                    </button>
+                </form>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> You need to be logged in to create a personalized learning path.
+                </div>
+                <a href="{% url 'login' %}?next={% url 'career_detail' career_id=career.id %}" class="btn btn-primary w-100 mb-2">
+                    Login
+                </a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary w-100">
+                    Sign Up
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Average Completion</h4>
+                <p>Based on typical learning pace:</p>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3">
+                        <i class="fas fa-calendar-alt fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">{{ career.avg_completion_time }} weeks</h5>
+                        <p class="text-muted mb-0">Full-time study</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-business-time fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">{{ career.avg_completion_time|mult:2 }} weeks</h5>
+                        <p class="text-muted mb-0">Part-time study</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
