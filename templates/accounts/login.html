@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}Login | Skill Path Recommender{% endblock %}
 
@@ -11,35 +12,14 @@
                 
                 <form method="post">
                     {% csrf_token %}
+                    {{ form|crispy }} {# Use crispy_forms_tags for better rendering #}
                     
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
-                        <input type="text" name="{{ form.username.name }}" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
-                            id="{{ form.username.id_for_label }}" required>
-                        {% if form.username.errors %}
-                        <div class="invalid-feedback">
-                            {{ form.username.errors }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                        <input type="password" name="{{ form.password.name }}" class="form-control {% if form.password.errors %}is-invalid{% endif %}"
-                            id="{{ form.password.id_for_label }}" required>
-                        {% if form.password.errors %}
-                        <div class="invalid-feedback">
-                            {{ form.password.errors }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="d-grid mb-3">
+                    <div class="d-grid mb-3 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">Login</button>
                     </div>
                     
                     <p class="text-center">
-                        Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+                        Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up</a>
                     </p>
                 </form>
             </div>

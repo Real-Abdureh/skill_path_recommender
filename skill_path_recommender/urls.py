@@ -2,14 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from accounts.views import home # Assuming home view will be in accounts.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Home and account management urls
-    path('', include('accounts.urls')),
-    # Career exploration
+    path('', home, name='home'),  # New home page URL
+    path('accounts/', include('accounts.urls')),
     path('careers/', include('careers.urls')),
-    # Learning paths
     path('learning-paths/', include('learning_paths.urls')),
 ]
 
