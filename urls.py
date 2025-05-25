@@ -1,10 +1,14 @@
 from django.contrib import admin
-from django.urls import path # Keep path for admin
+from django.urls import path, include # Keep path for admin
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('careers/', include('careers.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('learning_paths/', include('learning_paths.urls')),
+  
     # Other app urls are now included in skill_path_recommender.urls
 ]
 
