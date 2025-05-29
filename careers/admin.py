@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Skill, Career
+from .models import Skill, Career, CareerSkill
 
 # Unregister the models if they were previously registered simply
 # (This might not be strictly necessary if the overwrite_file_with_block replaces all content,
@@ -13,15 +13,18 @@ from .models import Skill, Career
 #     admin.site.unregister(Career)
 # except admin.sites.NotRegistered:
 #     pass
-
-class SkillAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
-    search_fields = ('name',)
+class CareerSkillInline(admin.TabularInline):
+    model = CareerSkill
+    extra = 1
 
 class CareerAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
-    filter_horizontal = ('required_skills',) # Use filter_horizontal for ManyToManyField
+    inlines = [CareerSkillInline]
+
+class SkillAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name',)
 
 admin.site.register(Skill, SkillAdmin)
 admin.site.register(Career, CareerAdmin)

@@ -20,6 +20,7 @@
 </head>
 <body>
     <!-- Navigation -->
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
@@ -34,8 +35,19 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if 'careers' in request.path %}active{% endif %}" href="{% url 'careers:careers_list' %}">Careers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'skills_list' %}active{% endif %}" href="{% url 'careers:skills_list' %}">Skills</a>
 
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'resources_list' %}active{% endif %}" href="{% url 'careers:resources_list' %}">Learning Resources</a>
+                    </li>                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'generate_path' %}active{% endif %}" href="{% url 'learning_paths:generate_path' %}">Create Path</a>
+                    </li>                    
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
