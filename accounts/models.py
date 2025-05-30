@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from careers.models import Skill, Career
 
 class UserProfile(models.Model):
     """Extended user profile model"""
@@ -14,6 +15,13 @@ class UserProfile(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
+    selected_career = models.ForeignKey(
+    Career,
+    null=True,
+    blank=True,
+    on_delete=models.SET_NULL,
+    related_name='users_with_this_goal'
+)
     current_position = models.CharField(max_length=100, blank=True)
     experience_level = models.CharField(max_length=20, choices=EXPERIENCE_LEVELS, default='beginner')
     learning_goal = models.CharField(max_length=255, blank=True)
