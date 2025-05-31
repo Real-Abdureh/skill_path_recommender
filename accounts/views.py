@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.models import User
 from .forms import SignUpForm, UserUpdateForm
-
+from careers.models import Career
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -205,7 +205,38 @@ def remove_user_skill(request, skill_id):
 
 
 
+@login_required
+def select_career_goal(request, career_id):
+    career = get_object_or_404(Career, pk=career_id)
+    try:
+        user_profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(user=request.user)
+        
+    if request.method == 'POST':
+        user_profile.selected_career = career
+        user_profile.save()
+        messages.success(request, f"'{career.name}' has been set as your career goal.")
+        return redirect('accounts:dashboard')
+    return redirect('careers:career_detail', career_id=career_id)
 
+@login_required
+def clear_career_goal(request):
+    try:
+        user_profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(user=request.user)
+
+    if request.method == 'POST':
+        if user_profile.selected_career:
+            current_goal_name = user_profile.selected_career.name
+            user_profile.selected_career = None
+            user_profile.save()
+            messages.success(request, f"Your career goal ('{current_goal_name}') has been cleared.")
+        else:
+            messages.info(request, "You didn't have a career goal selected.")
+        return redirect('accounts:dashboard')
+    return redirect('accounts:dashboard')
 
 
 

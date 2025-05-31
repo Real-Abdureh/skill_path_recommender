@@ -19,6 +19,30 @@
             <hr>
             <p class="lead">{{ career.description }}</p>
 
+            {% if user.is_authenticated %}
+            <hr>
+            <h4><i class="fas fa-bullseye text-primary"></i> Manage Your Goal</h4>
+            {% if user.profile.selected_career == career %}
+                <p><strong class="text-success"><i class="fas fa-check-circle"></i> This is your current career goal.</strong></p>
+                <form method="post" action="{% url 'accounts:clear_career_goal' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning btn-sm mb-3">Clear This Goal</button>
+                </form>
+            {% elif user.profile.selected_career %}
+                <p class="text-muted">Your current goal is: <strong>{{ user.profile.selected_career.name }}</strong>.</p>
+                <form method="post" action="{% url 'accounts:select_career_goal' career.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-info btn-sm mb-3">Switch to '{{ career.name }}' as Your Goal</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'accounts:select_career_goal' career.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm mb-3">Set '{{ career.name }}' as My Career Goal</button>
+                </form>
+            {% endif %}
+            <hr>
+            {% endif %}
+
             <h3 class="mt-4">Required Skills:</h3>
             {% if career.required_skills.all %}
                 <ul class="list-group list-group-flush">
