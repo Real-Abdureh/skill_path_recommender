@@ -45,7 +45,7 @@
                 <h3 class="card-title">{{ skill.name }}</h3>
                 <span class="badge bg-primary mb-2">{{ skill.get_category_display }}</span>
                 <p class="card-text">{{ skill.description|truncatechars:150 }}</p>
-                <a href="{% url 'skill_detail' skill_id=skill.id %}" class="btn btn-outline-primary">Learn More</a>
+                <a href="{% url 'careers:skill_detail' skill_id=skill.id %}" class="btn btn-outline-primary">Learn More</a>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'careers:career_list' %}">Careers</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'careers:careers_list' %}">Careers</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ career.name }}</li>
         </ol>
     </nav>
@@ -62,7 +62,7 @@
             {% endif %}
             
             <div class="mt-4">
-                <a href="{% url 'careers:career_list' %}" class="btn btn-outline-primary">
+                <a href="{% url 'careers:careers_list' %}" class="btn btn-outline-primary">
                     <i class="fas fa-arrow-left"></i> Back to Career List
                 </a>
                 <a href="{% url 'learning_paths:learning_path_for_career' career.id %}" class="btn btn-info ms-2">

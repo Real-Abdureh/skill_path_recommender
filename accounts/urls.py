@@ -20,4 +20,6 @@ urlpatterns = [
     path('profile/update/', views.profile_update, name='profile_update'),
     path('skills/add/', views.add_user_skill, name='add_user_skill'),
     path('skills/remove/<int:skill_id>/', views.remove_user_skill, name='remove_user_skill'),
+    path('select_career_goal/<int:career_id>/', views.select_career_goal, name='select_career_goal'),
+    path('clear_career_goal/', views.clear_career_goal, name='clear_career_goal'),
 ]
