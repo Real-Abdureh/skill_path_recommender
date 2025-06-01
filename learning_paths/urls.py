@@ -17,6 +17,7 @@ urlpatterns = [
     path('public/', views.public_paths, name='public_paths'),
     path('step/<int:step_id>/complete/', views.mark_step_completed, name='mark_step_completed'),
     path('step/<int:step_id>/incomplete/', views.mark_step_incomplete, name='mark_step_incomplete'),
+    path('career/<int:career_id>/', views.learning_path_for_career_view, name='learning_path_for_career'),
 ]
 
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import LearningPath, PathStep, LearningResource
 from careers.models import Career
-
+from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -145,6 +145,23 @@ def generate_path(request):
     # GET requests should go to career selection
     return redirect('careers:career_selection')
 
+def learning_path_for_career_view(request, career_id):
+    career = get_object_or_404(Career, pk=career_id)
+    # This picks the first learning path if a career has multiple.
+    learning_path = LearningPath.objects.filter(career=career).first() 
+    
+    steps = []
+    if learning_path:
+        steps = learning_path.steps.all()
+    
+    context = {
+        'career': career,
+        'learning_path': learning_path,
+        'steps': steps
+    }
+    # This reuses your existing template for displaying a path.
+    # Ensure 'learning_paths/path_detail.html' can handle 'learning_path' being None.
+    return render(request, 'learning_paths/path_detail.html', context)
 
 @login_required
 def mark_step_completed(request, step_id):
