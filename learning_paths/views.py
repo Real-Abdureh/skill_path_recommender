@@ -152,7 +152,9 @@ def learning_path_for_career_view(request, career_id):
     
     steps = []
     if learning_path:
-        steps = learning_path.steps.all()
+        steps = learning_path.steps.all().prefetch_related(
+            Prefetch('resources', queryset=LearningResource.objects.all()) # 'resources' (plural)
+        )
     
     context = {
         'career': career,
